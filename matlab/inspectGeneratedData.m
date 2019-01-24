@@ -9,6 +9,8 @@ load('data/generations_example.mat');
 
 % load template mesh
 [V_temp,F_temp] = read_ply('data/templateMesh.ply');
+% to create fInfo file for a new template, simply run 
+% [data, fInfo] = flattenMesh(V_temp, F_temp, params)
 load(fullfile('data/fInfo_temp.mat'));
 
 % reconstruct and show generated meshes
