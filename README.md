@@ -56,8 +56,6 @@ To train a new model, create a config file as the template in configs/config.jso
 ```
 python3 gan_main.py -c=configs/<my_config>.json
 ```
-An explanation about each field in that file can be found in configs/help.md
-
 
 ## Acknowledgments
 This research was supported in part by the European Research Council (ERC Consolidator Grant, ”LiftMatch” 771136), the Israel Science Foundation (Grant No. 1830/17). We would like thank the authors of  [AtlasNet](http://imagine.enpc.fr/~groueixt/atlasnet/) and of   [Deformable Shape Completion with Graph Convolutional Autoencoders](https://arxiv.org/abs/1712.00268) for sharing their results for comparison.
