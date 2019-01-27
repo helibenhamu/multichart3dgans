@@ -4,11 +4,10 @@ import tensorflow as tf
 import scipy.io as sio
 import random
 import glob
-import itertools
-import operator
+import argparse
 
 
-def main(src_dir, dst_dir, file_name_prefix='data', print_period=1000, tfr_size=500, train_size_percent=95):
+def main():
     """ main:
         gather all the images from src_dir and save them into tfrecords in dst_dir
         the maximum num of examples in each tfr will be tfr_size.
@@ -24,12 +23,25 @@ def main(src_dir, dst_dir, file_name_prefix='data', print_period=1000, tfr_size=
         4. concatenate the ndarrays in batches of tfr_size in the shape [tfr_size, image_numel]
         5. save each batch into a tfrrecord
     """
+
+    argparser = argparse.ArgumentParser(description=__doc__)
+    argparser.add_argument('-d', '--database_signature', metavar='D', default='None', help='The signature of the database')
+    argparser.add_argument('-s', '--train_size_percent', metavar='S', default=100, help='The percentage of the training set')
+    argparser.add_argument('-tfsz', '--tfr_size', metavar='TFSZ', default=500, help='Number of examples in tfrecord')
+
+    args = argparser.parse_args()
+
+    src_dir = 'databases/images/' + args.database_signature
+    dst_dir = 'databases/tfrecords/' + args.database_signature
+    file_name_prefix = 'data'
+    print_period = 1000
+
     print('converting {0} to {1}'.format(src_dir, dst_dir))
     # 1. Gather all the .mat files
     files = glob.glob(os.path.join(src_dir, '**/*.mat'), recursive=True)
     print(len(files))
 
-    train_size = int((train_size_percent*len(files))/100)
+    train_size = int((args.train_size_percent*len(files))/100)
 
     # 2. Split the files into val and train
     random.shuffle(files)
@@ -53,7 +65,7 @@ def main(src_dir, dst_dir, file_name_prefix='data', print_period=1000, tfr_size=
     for files, dst_dir, data_type in zip(all_files, dst_dirs, ['val', 'train']):
         print('converting {0} dataset of size {1}'.format(data_type, len(files)))
         create_or_recreate_dir(dst_dir)
-        turn_dataset_to_tfrecords(files=files, dst_dir=dst_dir, tfr_size=tfr_size, file_name_prefix=file_name_prefix, print_period=print_period)
+        turn_dataset_to_tfrecords(files=files, dst_dir=dst_dir, tfr_size=args.tfr_size, file_name_prefix=file_name_prefix, print_period=print_period)
 
 
 def create_or_recreate_dir(dir):
@@ -124,11 +136,6 @@ def _int64_feature(value):
 
 if __name__ == '__main__':
 
-    database_signature = 'humans_64x64'
-    src_dir = 'databases/images/' + database_signature
-    dst_dir_base = 'databases/tfrecords/' + database_signature
-    file_name_prefix = 'data'
-
-    main(src_dir=src_dir, dst_dir=dst_dir_base, file_name_prefix=file_name_prefix, train_size_percent=100)
+    main()
 
 
